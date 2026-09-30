@@ -1,0 +1,185 @@
+{
+  "name": "Bonus - Uptime Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9caaf532-2530-4fcf-9db1-bb91e866c461",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://demo.realworld.show",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a50914d4-a1b1-4879-aaa5-6a7d0e1a2daf",
+      "name": "HTTP Request",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "18abd9ff-a62a-48fd-a811-4732255db6ac",
+              "leftValue": "={{$json.statusCode}}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "5d28fd98-e534-441c-8db6-72b38aff296d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const statusCode = $json.statusCode ?? \"unknown\";\n\nreturn {\n  json: {\n    message:\n      `🚨 Uptime Alert\\n\\n` +\n      `RealWorld demo is not healthy.\\n` +\n      `HTTP Status: ${statusCode}\\n` +\n      `Checked URL: https://demo.realworld.show\\n` +\n      `Time: ${new Date().toISOString()}`\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        96
+      ],
+      "id": "92685007-b425-40ae-bf69-82ef7c21a472",
+      "name": "Uptime Alert"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{$json.message}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        896,
+        96
+      ],
+      "id": "a87d1e0f-2b9d-4b07-a5f7-5072e211ddd3",
+      "name": "Discord",
+      "webhookId": "e610117a-591e-420d-8acf-c50a3196ab56",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "AL0yDqjfiQNy2iGx",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Uptime Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Uptime Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Uptime Alert": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "724354a3-c9d6-4e08-a551-b8fe4e8b4501",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8cba1e1a5427f0b10b691de974d8532d210ffc39c0fa67e554d57544f48d3ac9"
+  },
+  "nodeGroups": [],
+  "id": "NvrDl7C5NYNoKxbl",
+  "tags": []
+}
