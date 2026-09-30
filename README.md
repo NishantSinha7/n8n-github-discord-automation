@@ -61,3 +61,16 @@ When the API request fails, the error is passed to an `Error Handler` Code node,
 ## Credentials
 
 The Discord webhook is stored using n8n Credentials rather than hard-coded directly into the workflow.
+## Additional Assessment Work
+
+### Task 1 — QA & Debug Report
+A structured QA investigation of the RealWorld/Conduit application covering functional, UX, accessibility, security, and validation issues, along with a root-cause analysis.
+
+See: `Task1_QA_Report_NishantSinha.pdf`
+
+### Bonus — Uptime Monitor
+An n8n workflow that checks the RealWorld demo every 5 minutes and sends a Discord alert when the application does not return HTTP 200. The workflow also includes retry logic and an error-handling path.
+
+See:
+- `Bonus_UptimeMonitor_NishantSinha.json`
+- `Bonus_UptimeMonitor_NishantSinha.png`
